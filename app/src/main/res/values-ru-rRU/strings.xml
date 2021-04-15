@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">ЛофтДеньги</string>
+    <string name="et_title_hint" translatable="false">Название</string>
+    <string name="et_amount_hint" translatable="false">Цена</string>
+    <string name="btn_add_title" translatable="false">Добавить</string>
+</resources>
