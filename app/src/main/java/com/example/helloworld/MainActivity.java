@@ -20,15 +20,16 @@ public class MainActivity extends AppCompatActivity {
 
         TabLayout tabLayout = findViewById(R.id.tabs);
         ViewPager viewPager = findViewById(R.id.viewpager);
-        viewPager.setAdapter(new BudgetPagerAdapter(getSupportFragmentManager(),
-                FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT));
+
+        viewPager.setAdapter(new BudgetPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT));
 
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.getTabAt(0).setText(R.string.expences);
         tabLayout.getTabAt(1).setText(R.string.income);
 
     }
-    static class BudgetPagerAdapter extends FragmentPagerAdapter{
+
+    static class BudgetPagerAdapter extends FragmentPagerAdapter {
 
         public BudgetPagerAdapter(@NonNull FragmentManager fm, int behavior) {
             super(fm, behavior);
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         @NonNull
         @Override
         public Fragment getItem(int position) {
-            return new BudgetFragment();
+            return BudgetFragment.newInstance(position);
         }
 
         @Override
