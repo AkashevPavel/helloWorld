@@ -1,48 +1,49 @@
 package com.example.helloworld;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
 
-import com.example.helloworld.items.Item;
-import com.example.helloworld.items.ItemsAdapter;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.android.material.tabs.TabLayout;
 
 public class MainActivity extends AppCompatActivity {
-
-    private RecyclerView itemsView;
-    private ItemsAdapter itemsAdapter = new ItemsAdapter(generateItemsList());
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        configureRecyclerView();
+        TabLayout tabLayout = findViewById(R.id.tabs);
+        ViewPager viewPager = findViewById(R.id.viewpager);
+
+        viewPager.setAdapter(new BudgetPagerAdapter(getSupportFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT));
+
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.getTabAt(0).setText(R.string.expences);
+        tabLayout.getTabAt(1).setText(R.string.income);
+
     }
 
-    public List<Item> generateItemsList(){
-        List<Item> itemsList = new ArrayList<>();
-        itemsList.add(new Item("milk", "40"));
-        itemsList.add(new Item("toothbrush", "70"));
-        itemsList.add(new Item("salary", "100"));
+    static class BudgetPagerAdapter extends FragmentPagerAdapter {
 
-        return itemsList;
+        public BudgetPagerAdapter(@NonNull FragmentManager fm, int behavior) {
+            super(fm, behavior);
+        }
+
+        @NonNull
+        @Override
+        public Fragment getItem(int position) {
+            return BudgetFragment.newInstance(position);
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
     }
-
-    private void configureRecyclerView() {
-        itemsView = findViewById(R.id.itemsView);
-        itemsView.setAdapter(itemsAdapter);
-
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false);
-        itemsView.setLayoutManager(layoutManager);
-    }
-
-
 }
