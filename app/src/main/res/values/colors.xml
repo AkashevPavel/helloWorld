@@ -4,8 +4,10 @@
     <color name="colorPrimaryDark">#3574fa</color>
     <color name="colorAccent">#03DAC5</color>
     <color name="expenseColor">#4A90E2</color>
-    <color name="addItemColor">#ffc107</color>
+    <color name="secondary">#ffc107</color>
     <color name="textColor">#666664</color>
+    <color name="onSecondary">#FFFFFF</color>
     <color name="white">#FFFFFF</color>
     <color name="green">#7ed321</color>
+    <color name="text_hint">#eaeaea</color>
 </resources>
