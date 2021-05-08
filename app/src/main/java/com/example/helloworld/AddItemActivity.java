@@ -2,11 +2,17 @@ package com.example.helloworld;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.textfield.TextInputEditText;
 
 import static com.example.helloworld.BudgetFragment.ARG_PRICE;
 import static com.example.helloworld.BudgetFragment.ARG_TITLE;
@@ -14,25 +20,89 @@ import static com.example.helloworld.BudgetFragment.REQUEST_CODE;
 
 public class AddItemActivity extends AppCompatActivity {
 
-    EditText title;
-    EditText price;
-    Button addButton;
+    private EditText title;
+    private EditText price;
+    private Button addButton;
+
+    private String mTitle, mPrice;
+
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
 
+
+
+
         title = findViewById(R.id.title);
+        title.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mTitle = s.toString();
+                checkEditTextHasText();
+
+            }
+        });
+
         price = findViewById(R.id.price);
+        price.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                mPrice = s.toString();
+                checkEditTextHasText();
+
+            }
+        });
+
+
         addButton = findViewById(R.id.add_button);
 
+        configureButton();
+    }
+
+    private void configureButton() {
         addButton.setOnClickListener(v -> {
+            mTitle = title.getText().toString();
+            mPrice = price.getText().toString();
+            if (mTitle.isEmpty() || mPrice.isEmpty()) {
+                Toast.makeText(getApplicationContext(), getString(R.string.invalid_input), Toast.LENGTH_LONG).show();
+            }
+
             Intent intent = new Intent();
-            intent.putExtra(ARG_TITLE, title.getText().toString());
-            intent.putExtra(ARG_PRICE, price.getText().toString());
+            intent.putExtra(ARG_TITLE, mTitle);
+            intent.putExtra(ARG_PRICE, mPrice);
             setResult(REQUEST_CODE, intent);
             finish();
+
+
         });
+    }
+
+    public void checkEditTextHasText() {
+        addButton.setEnabled(!TextUtils.isEmpty(mTitle) && !TextUtils.isEmpty(mPrice));
+
     }
 }
