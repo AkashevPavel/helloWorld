@@ -76,7 +76,10 @@ public class BudgetFragment extends Fragment {
         recyclerView.addItemDecoration(itemDecoration);
 
         swipeRefreshLayout = view.findViewById(R.id.refresh);
-        swipeRefreshLayout.setOnRefreshListener(this::loadItems);
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            loadItems();
+            swipeRefreshLayout.setRefreshing(false);
+        });
 
         return view;
     }

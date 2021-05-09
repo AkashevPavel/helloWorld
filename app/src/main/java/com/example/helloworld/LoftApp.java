@@ -2,6 +2,7 @@ package com.example.helloworld;
 
 import android.app.Application;
 
+import com.example.helloworld.remote.AuthApi;
 import com.example.helloworld.remote.MoneyApi;
 
 import okhttp3.OkHttpClient;
@@ -13,6 +14,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class LoftApp extends Application {
 
     public MoneyApi moneyApi;
+    public AuthApi authApi;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -30,13 +33,14 @@ public class LoftApp extends Application {
 
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://verdant-violet.glitch.me/")
+                .baseUrl("https://loftschool.com/android-api/basic/v1")
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .build();
 
         moneyApi = retrofit.create(MoneyApi.class);
+        authApi = retrofit.create(AuthApi.class);
 
 
     }
