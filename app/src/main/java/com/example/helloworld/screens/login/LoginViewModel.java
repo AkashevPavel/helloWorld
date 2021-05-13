@@ -28,13 +28,13 @@ public class LoginViewModel extends ViewModel {
         String userId = "1111";
 
         compositeDisposable.add(authApi.makeLogin(userId)
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .subscribe(authResponse -> {
-            authToken.postValue(authResponse.getAuth_token());
-        }, throwable -> {
-            messageString.postValue(throwable.getLocalizedMessage());
-        }));
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(authResponse -> {
+                authToken.postValue(authResponse.getAuth_token());
+            }, throwable -> {
+                messageString.postValue(throwable.getLocalizedMessage());
+            }));
 
     }
 }

@@ -9,5 +9,6 @@
     <color name="onSecondary">#FFFFFF</color>
     <color name="white">#FFFFFF</color>
     <color name="green">#7ed321</color>
+    <color name="green_hint">#cc7ed321</color>
     <color name="text_hint">#eaeaea</color>
 </resources>

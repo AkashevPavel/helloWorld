@@ -1,4 +1,4 @@
-package com.example.helloworld;
+package com.example.helloworld.screens.main;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,8 +10,12 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.helloworld.AddItemActivity;
+import com.example.helloworld.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+
+import static com.example.helloworld.screens.main.BudgetFragment.ARG_TITLE;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
             final int activeFragmentIndex = viewPager.getCurrentItem();
             Fragment activeFragment = getSupportFragmentManager().getFragments().get(activeFragmentIndex);
             Intent intent = new Intent (MainActivity.this, AddItemActivity.class);
+            intent.putExtra(ARG_TITLE, activeFragmentIndex);
             activeFragment.startActivityForResult(intent, BudgetFragment.REQUEST_CODE);
         });
 

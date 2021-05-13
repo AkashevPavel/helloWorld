@@ -13,6 +13,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LoftApp extends Application {
 
+    public static String AUTH_KEY = "authKey";
+
     public MoneyApi moneyApi;
     public AuthApi authApi;
 
@@ -33,7 +35,7 @@ public class LoftApp extends Application {
 
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://loftschool.com/android-api/basic/v1")
+                .baseUrl("https://loftschool.com/android-api/basic/v1/")
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava3CallAdapterFactory.create())

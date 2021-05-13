@@ -11,12 +11,11 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
-import com.google.android.material.textfield.TextInputEditText;
-
-import static com.example.helloworld.BudgetFragment.ARG_PRICE;
-import static com.example.helloworld.BudgetFragment.ARG_TITLE;
-import static com.example.helloworld.BudgetFragment.REQUEST_CODE;
+import static com.example.helloworld.screens.main.BudgetFragment.ARG_PRICE;
+import static com.example.helloworld.screens.main.BudgetFragment.ARG_TITLE;
+import static com.example.helloworld.screens.main.BudgetFragment.REQUEST_CODE;
 
 public class AddItemActivity extends AppCompatActivity {
 
@@ -32,8 +31,6 @@ public class AddItemActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
-
-
 
 
         title = findViewById(R.id.title);
@@ -77,6 +74,7 @@ public class AddItemActivity extends AppCompatActivity {
             }
         });
 
+        setInputTextColor();
 
         addButton = findViewById(R.id.add_button);
 
@@ -103,6 +101,19 @@ public class AddItemActivity extends AppCompatActivity {
 
     public void checkEditTextHasText() {
         addButton.setEnabled(!TextUtils.isEmpty(mTitle) && !TextUtils.isEmpty(mPrice));
+
+    }
+    public void setInputTextColor() {
+        int activeFragmentIndex = getIntent().getIntExtra(ARG_TITLE, -1);
+        if (activeFragmentIndex == 1) {
+            title.setTextColor(ContextCompat.getColor(title.getContext(), R.color.green));
+            price.setTextColor(ContextCompat.getColor(price.getContext(), R.color.green));
+//            price.setHintTextColor(ContextCompat.getColor(title.getContext(), R.color.green_hint));
+//            title.setHintTextColor(ContextCompat.getColor(title.getContext(), R.color.green_hint));
+        }
+        title.setTextColor(ContextCompat.getColor(title.getContext(), R.color.colorPrimary));
+        price.setTextColor(ContextCompat.getColor(price.getContext(), R.color.colorPrimary));
+
 
     }
 }
