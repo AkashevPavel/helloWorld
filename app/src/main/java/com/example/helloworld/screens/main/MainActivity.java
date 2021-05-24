@@ -1,33 +1,21 @@
-package com.example.helloworld;
+package com.example.helloworld.screens.main;
+
+import android.content.Intent;
+import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
-
 import androidx.viewpager.widget.ViewPager;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Toast;
-
-import com.example.helloworld.items.Item;
-import com.example.helloworld.remote.MoneyRemoteItem;
-import com.example.helloworld.remote.MoneyResponse;
+import com.example.helloworld.AddItemActivity;
+import com.example.helloworld.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
-
-import io.reactivex.rxjava3.disposables.CompositeDisposable;
-import io.reactivex.rxjava3.disposables.Disposable;
-import io.reactivex.rxjava3.functions.Consumer;
-import io.reactivex.rxjava3.schedulers.Schedulers;
+import static com.example.helloworld.screens.main.BudgetFragment.ARG_TITLE;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -53,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
             final int activeFragmentIndex = viewPager.getCurrentItem();
             Fragment activeFragment = getSupportFragmentManager().getFragments().get(activeFragmentIndex);
             Intent intent = new Intent (MainActivity.this, AddItemActivity.class);
+            intent.putExtra(ARG_TITLE, activeFragmentIndex);
             activeFragment.startActivityForResult(intent, BudgetFragment.REQUEST_CODE);
         });
 

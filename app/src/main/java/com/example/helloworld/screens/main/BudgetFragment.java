@@ -1,4 +1,4 @@
-package com.example.helloworld;
+package com.example.helloworld.screens.main;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,11 +10,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.helloworld.LoftApp;
+import com.example.helloworld.R;
 import com.example.helloworld.items.Item;
 import com.example.helloworld.items.ItemsAdapter;
 import com.example.helloworld.remote.MoneyRemoteItem;
@@ -34,12 +39,10 @@ public class BudgetFragment extends Fragment {
     public static final String ARG_PRICE = "price";
     public static final String ARG_POSITION = "position";
 
-    private RecyclerView recyclerView;
     private ItemsAdapter itemsAdapter;
-    private List<Item> itemsList = new ArrayList<>();
     private int currentPosition;
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private SwipeRefreshLayout swipeRefreshLayout;
+    private MainViewModel mainViewModel;
 
 
     @Override
@@ -48,23 +51,15 @@ public class BudgetFragment extends Fragment {
         if (getArguments() != null) {
             currentPosition = getArguments().getInt(ARG_POSITION);
         }
-        loadItems();
-    }
-
-
-
-    @Override
-    public void onDestroy() {
-        compositeDisposable.dispose();
-        super.onDestroy();
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_budget, null);
 
-        recyclerView = view.findViewById(R.id.recycler);
+        RecyclerView recyclerView = view.findViewById(R.id.recycler);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(layoutManager);
@@ -76,9 +71,27 @@ public class BudgetFragment extends Fragment {
         recyclerView.addItemDecoration(itemDecoration);
 
         swipeRefreshLayout = view.findViewById(R.id.refresh);
-        swipeRefreshLayout.setOnRefreshListener(this::loadItems);
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            downLoad();
+            swipeRefreshLayout.setRefreshing(false);
+        });
+
+        configureViewModel();
+        downLoad();
 
         return view;
+    }
+
+    private void configureViewModel() {
+
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        mainViewModel.itemsList.observe(getViewLifecycleOwner(), items -> itemsAdapter.setData(items));
+        mainViewModel.messageString.observe(getViewLifecycleOwner(), message -> {
+            if (!message.equals("")) showToast(message);
+        });
+        mainViewModel.messageInt.observe(getViewLifecycleOwner(), message -> {
+            if (message > 0) showToast(getString(message));
+        });
     }
 
     @Override
@@ -86,17 +99,14 @@ public class BudgetFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_CODE && data != null) {
-            Disposable disposable = ((LoftApp) getActivity().getApplicationContext()).moneyApi.postMoney(
-                    Double.parseDouble(data.getStringExtra(ARG_PRICE)), data.getStringExtra(ARG_TITLE), getTypeFromPosition(currentPosition))
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(() -> Toast.makeText(getActivity(), getString(R.string.successfully_added), Toast.LENGTH_LONG).show(),
-                            throwable -> Toast.makeText(getActivity(), throwable.getLocalizedMessage(), Toast.LENGTH_LONG).show());
-
-            compositeDisposable.add(disposable);
+            mainViewModel.uploadBudget(
+                    ((LoftApp) getActivity().getApplicationContext()).moneyApi,
+                    Double.parseDouble(data.getStringExtra(ARG_PRICE)),
+                    data.getStringExtra(ARG_TITLE),
+                    getTypeFromPosition(currentPosition),
+                    getActivity().getSharedPreferences(getString(R.string.app_name), 0)
+            );
         }
-
-
     }
 
     public static BudgetFragment newInstance(int position) {
@@ -107,29 +117,11 @@ public class BudgetFragment extends Fragment {
         return fragment;
     }
 
-
-    private void loadItems() {
-        Disposable disposable = ((LoftApp) getActivity().getApplication()).moneyApi.getMoneyItem(getTypeFromPosition(currentPosition))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(moneyResponse -> {
-                    if (moneyResponse.getStatus().equals("success")) {
-                        itemsList = new ArrayList<>();
-                        for (MoneyRemoteItem moneyRemoteItem : moneyResponse.getMoneyItemList()) {
-                            itemsList.add(Item.getInstance(moneyRemoteItem));
-                        }
-
-                        itemsAdapter.setData(itemsList);
-
-                    } else {
-                        Toast.makeText(getActivity(), getString(R.string.connection_lost), Toast.LENGTH_LONG).show();
-                    }
-                }, throwable -> {
-                    Toast.makeText(getActivity(), throwable.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                });
-
-        compositeDisposable.add(disposable);
-
+    private void downLoad() {
+        mainViewModel.loadBudget(
+                ((LoftApp) getActivity().getApplicationContext()).moneyApi,
+                getTypeFromPosition(currentPosition),
+                this.getActivity().getSharedPreferences(getString(R.string.app_name), 0));
     }
 
     private String getTypeFromPosition(int currentPosition) {
@@ -137,5 +129,9 @@ public class BudgetFragment extends Fragment {
         if (currentPosition == 0) type = "expense";
         else type = "income";
         return type;
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
     }
 }
